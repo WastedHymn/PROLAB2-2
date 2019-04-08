@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1554728696 source:c:\users\gravity\documents\codeblocks\deneme\deneme\main.c
+	<stdio.h>
+	<stdlib.h>
+
