@@ -25,6 +25,7 @@ void bilgiAl2(){
 
             if(tablo[i][j] == '-'){
                 printf("\nsatir sonu");
+                printf("TEST");
                 break;
             }
 
@@ -70,7 +71,7 @@ void karakterSay(){
   i++;
   c = bilgi[i];
   }
-    printf("Karakter sayisi: %d \n", n);
+    printf("Karakter sayisi : %d \n", n);
 }
 
 int main()
