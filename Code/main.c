@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 const char *input[] = {"20,20,10","1,su,30,0.5","2,cay,20,1.0","3,kahve,15,1.5","4,cikolata,50,1.75","5,biskuvi,100,2.0"};
 struct urun{
@@ -12,6 +14,7 @@ struct urun{
 
 struct hesap{
     int para[3];
+
 }banka;
 
 void kasabilgilerinial(char gelensatir[30])
@@ -61,8 +64,87 @@ void urunbilgilerinial(char satir[] , int sayi)
     }
 }
 
+float bakiyeyukle(int yirmibes, int ellikurus, int birtl)
+{
+    float toplam=0;
+    toplam+=yirmibes*0.25;
+    toplam+=ellikurus*0.50;
+    toplam+=birtl*1.0;
+    banka.para[0]+=yirmibes;
+    banka.para[1]+=ellikurus;
+    banka.para[2]+=birtl;
+
+    printf("\nKullanıcı Su Kadar Para Yukledi: %0.2f TL\n",toplam);
+
+    return toplam;
+
+}
+
+void kasayigoster(){
+    printf("\nKasadaki Guncel Bakiye Degerleri:\n");
+    printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d\n",banka.para[0],banka.para[1],banka.para[2]);
+}
+void urunlerigoster(){
+    printf("\nUrun Bilgileri \nUrun Adi\t Urun Stogu\t Urun Fiyati\n");
+    for (int i = 0; i < 5; i++)
+    {
+        printf("%s, \t\t %d, \t\t%0.2f \n",urunler[i].urunAd,urunler[i].urunStok,urunler[i].urunFiyat);
+    }
+}
+
+
+void urunsec(int a,b,c,d,f,float kullanicibakiye,float guncelbakiye){
+    float harcamatutari=0;
+    float paraustu=0;
+    int ust=0;
+    for (int i = 0; i <5 ; ++i) {
+        if(i==0)
+        harcamatutari+=a*urunler[i].urunFiyat;
+        if(i==1)
+            harcamatutari+=b*urunler[i].urunFiyat;
+        if(i==2)
+            harcamatutari+=c*urunler[i].urunFiyat;
+        if(i==3)
+            harcamatutari+=d*urunler[i].urunFiyat;
+        if(i==4)
+            harcamatutari+=f*urunler[i].urunFiyat;
+    }
+
+    printf("HARCANACAK TUTAR: %0.2f",harcamatutari);
+
+    if(harcamatutari>kullanicibakiye)// Kullanıcının Parasının Yetmemesi Durumu
+        printf("\nAlisveris icin Bakiyeniz Yetersiz. ");
+        else if (harcamatutari==kullanicibakiye) // Paranın Tam Yetmesi Durumu
+            printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
+        else if(harcamatutari<kullanicibakiye)//Verilen Paranın Harcamadan Fazla Olması Paraustu Verilecek
+        {
+            printf("\nKullanici bakiyesi: %0.2f, Harcama Tutarı: %0.2f",kullanicibakiye,harcamatutari);
+            paraustu=kullanicibakiye-harcamatutari;
+            printf("\nVerilecek Para Ustumuz: %0.2f \nPara Ustu Hesaplaniyor...\n",paraustu);
+
+            sleep(5);
+            while(paraustu!=0.0)
+            {
+                paraustu-=0.25;
+                ust++;
+            }
+            int birtl=ust/4;
+            ust%=4;
+            int ellikurus=ust/2;
+            ust%=2;
+
+            printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
+            banka.para[0]-=ust;
+            banka.para[1]-=ellikurus;
+            banka.para[2]-=birtl;
+            sleep(5);
+        }
+}
+
 void bilgigonder()
 {
+    int yirmibeskurus=5,ellikurus=10,birtl=15; //Kullanıcı Girdisi
+    int a=2,b=2,c=2,d=2,f=2; // Alınacak Ürünler
     char temp[30];
     strcpy(temp,input[0]);//20 20 10 -> temp
     kasabilgilerinial(temp);
@@ -74,20 +156,26 @@ void bilgigonder()
         urunbilgilerinial(temp,sayi);
         sayi++ ;
     }
+
+    kasayigoster();
+    urunlerigoster();
+    float guncelbakiye=banka.para[0]+banka.para[1]+banka.para[2]; //Kasadaki Toplam Para
+    float kullanicibakiye;
+    kullanicibakiye=bakiyeyukle(yirmibeskurus,ellikurus,birtl); // Kullanici Bakiyesi
+
+    urunsec(a,b,c,d,f,kullanicibakiye,guncelbakiye);
+
+    kasayigoster();
+
 }
+
 
 int main()
 {
 
     bilgigonder();
 
-    printf("Bakiye Degerleri:\n");
-    printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d",banka.para[0],banka.para[1],banka.para[2]);
-    printf("\n\nUrun Bilgileri:\n");
-    for (int i = 0; i < 5; i++)
-    {
-        printf("%s , %d , %0.2f \n",urunler[i].urunAd,urunler[i].urunStok,urunler[i].urunFiyat);
-    }
+
 
 
     return 0;
