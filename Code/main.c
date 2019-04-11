@@ -1,83 +1,84 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
+    char input[] = {
+    "20,20,10",
+    "1,su,30,0.5",
+    "2,cay,20,1.0",
+    "3,kahve,15,1.5",
+    "4,cikolata,50,1.75",
+    "5,biskuvi,100,2.0"};
 
-struct urun{
-    int urunId;
-    int urunStok;
-    int urunFiyat;
-    char urunAd;
+    struct urun{
+        int urunId;
+        int urunStok;
+        int urunFiyat;
+        char urunAd;
+    }urunler[5];
 
-};
-
-char bilgi[] = "20,20,10,1,su,30,0.5,cay,20,1.0,3,kahve,15,1.5,4,cikolata,50,1.75,5,biskuvi,100,2.0";
-char tablo[23][20];
-char c;
-int temp, yirmibes, elli, bir, i=0, j=0, n=0, t=0, virgulSayac=0, sayac =0;
-float sayi;
-
-
-void bilgiAl2(){
-    for(i=0; i<23; i++){
-        for(j=0;j<20;j++){
-            if(virgulSayac == 0){
-
+    struct hesap{
+        int para[3];
+    }banka;
+    void kasabilgilerinial(char gelensatır[30])
+    {
+        int x=0;
+        char *parçalayacağımızsatır ;
+        char const virgul[2] = "," ;
+        parçalayacağımızsatır = strtok(gelensatır,virgül);
+        while(parçalayacağımızsatır != NULL)
+        {
+            // 20 -> int 20 
+            banka.para[x] = atoi(parçalayacağımızsatır);  
+            parçalayacağımızsatır = strtok(NULL,virgül);
+            x++ ;
+        }
+    }
+    void ürünbilgilerinial(char satır[] , int sayi)
+    {
+        int x = 0 ;
+        // ilk 5 satır aynı 
+        while()
+        {
+            // x = 0 iken ürünün id  
+            if(x == 0)
+            {
+                urunler[sayi].urunId = sayi+1 ;
+            }
+            // x = 1 ne alıyorum nereye göndercem
+            // x = 1 -> ürünün ismi var 
+            if(x == 1 )
+            {
+                strcpy(urunler[sayi].urunAd)
             }
 
-            if(tablo[i][j] == '-'){
-                printf("\nsatir sonu");
-                printf("TEST");
-                break;
-            }
 
+            if(x==2)
+            urunler[sayi].urunStok=atoi(parçalayacağımızsatır);
+            // yazacağın yer  = atoi(string) ;
+    
+    
+            parçayalayacağımızsatır = strtok(NULL,virgül);
+            x++ ;
         }
     }
-    printf("sayi: %d\n", sayi);
-}
 
-
-void bilgiAl(){
-    //Virgülleri böl.
-    for(i=0;i<n;i++){
-        c = bilgi[i];
-        if(c == ','){
-            tablo[t][j] = '-';
-            t++;
-            j=0;
-        }else{
-            tablo[t][j] = c;
-            j++;
-
-        }
-
-    }
-  //Tabloyu yazdır.
-  for(i=0;i<23;i++){
-    for(j=0;j<20;j++){
-        if(tablo[i][j] == '-'){
-            printf("\n");
-            break;
-        }else{
-            printf("%c", tablo[i][j]);
+    void bigligonder()
+    {
+        char temp[30];
+        strcpy(temp,input[0]);//20 20 10 -> temp
+        kasabilgilerinial(temp);
+        int i ;
+        int  sayı = 0  ;
+        for(int i = 1 ; i < 6 ; i++)
+        {
+            strcpy(temp,input[i]);
+            ürünbilgilerinial(temp,sayı);
+            sayı++ ;
         }
     }
-  }
 
-}
-
-void karakterSay(){
-  c = bilgi[i];
-  while(c != '\0'){
-  n++;
-  i++;
-  c = bilgi[i];
-  }
-    printf("Karakter sayisi : %d \n", n);
-}
-
-int main()
+int main() 
 {
-    karakterSay();
-    bilgiAl();
-    bilgiAl2();
+    bigligonder();
+ 
     return 0;
 }
