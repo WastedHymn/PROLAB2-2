@@ -99,7 +99,7 @@ void urunsec(int a,b,c,d,f,float kullanicibakiye,float guncelbakiye){
     int ust=0;
     for (int i = 0; i <5 ; ++i) {
         if(i==0)
-        harcamatutari+=a*urunler[i].urunFiyat;
+            harcamatutari+=a*urunler[i].urunFiyat;
         if(i==1)
             harcamatutari+=b*urunler[i].urunFiyat;
         if(i==2)
@@ -110,35 +110,35 @@ void urunsec(int a,b,c,d,f,float kullanicibakiye,float guncelbakiye){
             harcamatutari+=f*urunler[i].urunFiyat;
     }
 
-    printf("HARCANACAK TUTAR: %0.2f",harcamatutari);
+    printf("\nSecilen Urunler icin Harcanacak Tutar: %0.2f\n",harcamatutari);
 
     if(harcamatutari>kullanicibakiye)// Kullanıcının Parasının Yetmemesi Durumu
         printf("\nAlisveris icin Bakiyeniz Yetersiz. ");
-        else if (harcamatutari==kullanicibakiye) // Paranın Tam Yetmesi Durumu
-            printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
-        else if(harcamatutari<kullanicibakiye)//Verilen Paranın Harcamadan Fazla Olması Paraustu Verilecek
+    else if (harcamatutari==kullanicibakiye) // Paranın Tam Yetmesi Durumu
+        printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
+    else if(harcamatutari<kullanicibakiye)//Verilen Paranın Harcamadan Fazla Olması Paraustu Verilecek
+    {
+        printf("\nKullanici bakiyesi: %0.2f, Harcama Tutarı: %0.2f",kullanicibakiye,harcamatutari);
+        paraustu=kullanicibakiye-harcamatutari;
+        printf("\nVerilecek Para Ustumuz: %0.2f \nPara Ustu Hesaplaniyor...\n",paraustu);
+
+        sleep(2);
+        while(paraustu!=0.0)
         {
-            printf("\nKullanici bakiyesi: %0.2f, Harcama Tutarı: %0.2f",kullanicibakiye,harcamatutari);
-            paraustu=kullanicibakiye-harcamatutari;
-            printf("\nVerilecek Para Ustumuz: %0.2f \nPara Ustu Hesaplaniyor...\n",paraustu);
-
-            sleep(5);
-            while(paraustu!=0.0)
-            {
-                paraustu-=0.25;
-                ust++;
-            }
-            int birtl=ust/4;
-            ust%=4;
-            int ellikurus=ust/2;
-            ust%=2;
-
-            printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
-            banka.para[0]-=ust;
-            banka.para[1]-=ellikurus;
-            banka.para[2]-=birtl;
-            sleep(5);
+            paraustu-=0.25;
+            ust++;
         }
+        int birtl=ust/4;
+        ust%=4;
+        int ellikurus=ust/2;
+        ust%=2;
+
+        printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
+        banka.para[0]-=ust;
+        banka.para[1]-=ellikurus;
+        banka.para[2]-=birtl;
+        sleep(2);
+    }
 }
 
 void bilgigonder()
@@ -169,14 +169,9 @@ void bilgigonder()
 
 }
 
-
 int main()
 {
-
     bilgigonder();
-
-
-
 
     return 0;
 }
