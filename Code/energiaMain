@@ -28,7 +28,7 @@ int birTL = 0;
 int tempYirmibes = 0;
 int tempElli = 0;
 int tempBir = 0;
-
+float kullanicibakiye;
 //Sipariş Değişkenleri
 int ssu = 0;
 int scay = 0;
@@ -66,6 +66,7 @@ struct urun{
 
 struct hesap{
     int para[3];
+
 }banka;
 
 void kasabilgilerinial(char gelensatir[30])
@@ -121,10 +122,9 @@ float bakiyeyukle(int yirmibes, int ellikurus, int birtl)
     toplam+=yirmibes*0.25;
     toplam+=ellikurus*0.50;
     toplam+=birtl*1.0;
-    //Burada bir bug varmış gibi geldi.Belki mantığını yanlış anladım.Alttaki 3 satıra bakmak gerek.
-    //banka.para[0]+=yirmibes;
-    //banka.para[1]+=ellikurus;
-    //banka.para[2]+=birtl;
+    banka.para[0]+=yirmibes;
+    banka.para[1]+=ellikurus;
+    banka.para[2]+=birtl;
 
     printf("\nKullanicinin Yukledigi Para Miktari: %0.2f TL\n",toplam);
     
@@ -134,9 +134,8 @@ float bakiyeyukle(int yirmibes, int ellikurus, int birtl)
 }
 
 void kasayigoster(){
-   //Printfler energia da çalışmıyor.
-   // printf("\nKasadaki Guncel Bakiye Degerleri:\n");
-   // printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d\n",banka.para[0],banka.para[1],banka.para[2]);
+    printf("\nKasadaki Guncel Bakiye Degerleri:\n");
+    printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d\n",banka.para[0],banka.para[1],banka.para[2]);
     float toplam = (banka.para[0]*0.25)+(banka.para[1]*0.5)+(banka.para[2]*1);
     lcd.clear();
     lcd.print("Kasa: ");
@@ -173,10 +172,18 @@ void urunsec(int a, int b,int c,int d,int f,float kullanicibakiye,float guncelba
     }
 
     printf("\nSecilen Urunler icin Harcanacak Tutar: %0.2f\n",harcamatutari);
-
-    if(harcamatutari>kullanicibakiye)// Kullanıcının Parasının Yetmemesi Durumu
-        //printf("\nAlisveris icin Bakiyeniz Yetersiz. ");
+    lcd.clear();
+    lcd.print("Siparis:");
+    lcd.print(harcamatutari);
+    lcd.print("TL");
+    delay(4000);
+    
+    if(harcamatutari>kullanicibakiye){
+      //printf("\nAlisveris icin Bakiyeniz Yetersiz. ");
+        lcd.clear();
         lcd.print("Bakiye yetersiz.");
+    }// Kullanıcının Parasının Yetmemesi Durumu
+        
     else if (harcamatutari==kullanicibakiye) // Paranın Tam Yetmesi Durumu
        printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
     else if(harcamatutari<kullanicibakiye)//Verilen Paranın Harcamadan Fazla Olması Paraustu Verilecek
@@ -225,14 +232,14 @@ void bilgigonder()
     kasayigoster();
     //urunlerigoster();
     float guncelbakiye=(banka.para[0]*0.25)+(banka.para[1]*0.5)+(banka.para[2]*1); //Kasadaki Toplam Para
-    float kullanicibakiye;
+    
     
     //yirmibeskurus, ellikurus, birt1 değişkenlerine butonlar ile değer atayan fonksiyon burada çağıralacak
     //lcd.print("BEFORE");
     //delay(3000);
     kullanicibakiye=bakiyeyukle(yirmibesK,elliK,birTL); // Kullanici Bakiyesi
 
-    urunsec(su,cay,kahve,cikolata,biskuvi,kullanicibakiye,guncelbakiye);
+    urunsec(ssu,scay,skahve,scikolata,sbiskuvi,kullanicibakiye,guncelbakiye);
 
     kasayigoster();
 
@@ -247,6 +254,7 @@ void bakiye(){
   tempElli = 0;
   tempBir = 0;
   float toplam = (yirmibesK*0.25) + (elliK*0.5) + (birTL*1);
+  kullanicibakiye = toplam;
   lcd.clear();
   lcd.print(toplam);
   lcd.print(" TL para attiniz.");
@@ -281,6 +289,9 @@ void siparisYukle(){
    lcd.print(" ");
    lcd.print(sbiskuvi);
    */
+   float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
+   //lcd.clear(); 
+   //delay(4000);
    bilgigonder();
 }
 
@@ -334,14 +345,20 @@ void loop(){
   if(yirmibesDurumu == LOW){
     delay(300);
     tempYirmibes++;
+    lcd.clear();
+    lcd.print("0.25TL");
   }
   if(elliDurumu == LOW){
     delay(300);
     tempElli++;
+    lcd.clear();
+    lcd.print("0.50TL");
   }
   if(birDurumu == LOW){
     delay(300);
     tempBir++;
+    lcd.clear();
+    lcd.print("1TL");
   }
   if(paraBitisDurumu == LOW){
     delay(300);
