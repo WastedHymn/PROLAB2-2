@@ -58,7 +58,7 @@ int siparisBitisDurumu = 0;
 int resetTusuDurumu = 0;
 int i = 0;
 
-const char *input[] = {"20,20,10","1,su,30,0.5","2,cay,20,1.0","3,kahve,15,1.5","4,cikolata,50,1.75","5,biskuvi,100,2.0"};
+const char *input[] = {"20,20,10","1,su,0,0.5","2,cay,20,1.0","3,kahve,15,1.5","4,cikolata,50,1.75","5,biskuvi,100,2.0"};
 struct urun{
     int urunId;
     char urunAd[30];
@@ -282,6 +282,11 @@ void urunsec(){
         lcd.clear();
         lcd.print("Bakiye yetersiz.");
         delay(4000);
+        banka.para[0]-= yirmibesK;
+        banka.para[1]-= elliK;
+        banka.para[2]-= birTL;
+        kullanicibakiye = 0;
+        Serial.print("\nPara iade edildi.\n");
     }else{
     // Stok Kontrolu Islemi
     for(int i=0; i<5; i++)
@@ -290,25 +295,27 @@ void urunsec(){
             if(ssu>urunler[i].urunStok){
                 Serial.print("\nSectiginiz ");
                 Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.\n");
+                harcamatutari -= ssu*urunler[0].urunFiyat;
                 ssu=0;
             }
             if(ssu<=urunler[i].urunStok){
               urunler[i].urunStok-=ssu;
-              Serial.print("\nYeterli su var");
+              
             }
             
         }
         if(i==1) {
             if(scay>urunler[i].urunStok){
-                 Serial.print("\nSectiginiz ");
+                Serial.print("\nSectiginiz ");
                 Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.\n");
+                harcamatutari -= scay*urunler[1].urunFiyat;
                 scay=0;
             }
             if(scay<=urunler[i].urunStok){
               urunler[i].urunStok-=scay;
-              Serial.print("\nYeterli çay var");
+              
             }
             
         }
@@ -316,12 +323,13 @@ void urunsec(){
             if(skahve>urunler[i].urunStok){
                 Serial.print("\nSectiginiz ");
                 Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.\n");
+                harcamatutari -= skahve*urunler[2].urunFiyat;
                 skahve=0;
             }
             if(skahve<=urunler[i].urunStok){
                urunler[i].urunStok-=skahve;
-               Serial.print("\nYeterli kahve var");
+              
             }
            
         }
@@ -329,12 +337,13 @@ void urunsec(){
             if(scikolata>urunler[i].urunStok){
                 Serial.print("\nSectiginiz ");
                 Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.\n");
+                harcamatutari -= scikolata*urunler[3].urunFiyat;
                 scikolata=0;
             }
             if(scikolata<=urunler[i].urunStok){
               urunler[i].urunStok-=scikolata;  
-              Serial.print("\nYeterli cikolata var");
+              
             }
             
         }
@@ -343,11 +352,12 @@ void urunsec(){
                 Serial.print("\nSectiginiz ");
                 Serial.print(urunler[i].urunAd);
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                harcamatutari -= sbiskuvi*urunler[4].urunFiyat;
                 sbiskuvi=0;
             }
             if(sbiskuvi<=urunler[i].urunStok){
               urunler[i].urunStok-=sbiskuvi;  
-              Serial.print("\nYeterli biskuvi var\n");
+             
             }
             
         }
@@ -357,6 +367,8 @@ void urunsec(){
         Serial.print("\nAlisveris Gerceklesir... Para ustu yok.\n");
         lcd.clear();
         lcd.print("Para ustu yok.");
+        stokGoster();
+        kullanicibakiye = 0;
         delay(4000);
     }// Paranın Tam Yetmesi Durumu
        
@@ -383,13 +395,19 @@ void urunsec(){
         ust%=2;
         // 1TL 50Krs ve 25Krslarin sayisinin kontrolu
         if(birtl>banka.para[2]){
-            Serial.print("\nPara ustu verilemiyor, bozuk 1 TL yetersiz");
+            Serial.print("\nPara ustu verilemiyor, bozuk 1 TL yetersiz\n");
+        } else{
+          banka.para[2]-=birtl;  
         }
         if(ellikurus>banka.para[1]){
-            Serial.print("\nPara ustu verilemiyor, bozuk 50 Kurus yetersiz");
+            Serial.print("\nPara ustu verilemiyor, bozuk 50 Kurus yetersiz\n");
+        }else{
+          banka.para[1]-=ellikurus;  
         }
         if(ust>banka.para[0]){
-            Serial.print("\nPara ustu verilemiyor, bozuk 25 Kurus yetersiz");
+            Serial.print("\nPara ustu verilemiyor, bozuk 25 Kurus yetersiz\n");
+        }else{
+            banka.para[0]-=ust;  
         }
         
         //1 TL Miktarı
@@ -406,11 +424,6 @@ void urunsec(){
         Serial.print(ust);
         Serial.print(" tane 0.25TL");
         Serial.print("\n");
-        
-        
-        banka.para[0]-=ust;
-        banka.para[1]-=ellikurus;
-        banka.para[2]-=birtl;
        
         stokGoster();
         kullanicibakiye = 0;
