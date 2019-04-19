@@ -130,13 +130,13 @@ void bakiyeYukle()
     
     float toplam=0;
     
-    toplam+=tempYirmibes*0.25;
-    toplam+=tempElli*0.50;
-    toplam+=tempBir*1.0;
+    toplam+=yirmibesK*0.25;
+    toplam+=elliK*0.50;
+    toplam+=birTL*1.0;
     
-    banka.para[0]+=yirmibesK;
-    banka.para[1]+=elliK;
-    banka.para[2]+=birTL;
+    //banka.para[0]+=yirmibesK;
+    //banka.para[1]+=elliK;
+    //banka.para[2]+=birTL;
     
     //printf("\nKullanicinin Yukledigi Para Miktari: %0.2f TL\n",toplam);
     kullanicibakiye = toplam;
@@ -162,6 +162,7 @@ void bakiyeYukle()
     tempYirmibes = 0;
     tempElli = 0;
     tempBir = 0;
+    bilgigonder();
     //return toplam;
 }
 
@@ -225,7 +226,7 @@ void kasayigoster(){
 }
 
 void konsoldaSiparisler(){
-  Serial.print("\nVerilen Siparişler\n");
+   Serial.print("\nVerilen Siparişler\n");
    Serial.print("Su: ");
    Serial.print(ssu);
    Serial.print(" tane\n");
@@ -384,6 +385,7 @@ void urunsec(){
         //lcd.print(ellikurus);
         //lcd.print("tane 0.5TL");
         //delay(4000);
+        
         //0.25 TL Miktarı
         Serial.print(ust);
         Serial.print(" tane 0.25TL");
@@ -392,6 +394,7 @@ void urunsec(){
         //lcd.print(ust);
         //lcd.print("tane 0.25TL");
         //delay(4000);
+        
         banka.para[0]-=ust;
         banka.para[1]-=ellikurus;
         banka.para[2]-=birtl;
@@ -411,6 +414,10 @@ void bilgigonder()
     char temp[30];
     strcpy(temp,input[0]);//20 20 10 -> temp
     kasabilgilerinial(temp);
+    kasayigoster();
+    banka.para[0]+=yirmibesK;
+    banka.para[1]+=elliK;
+    banka.para[2]+=birTL;
     int i ;
     int sayi = 0  ;
     for(int i = 1 ; i < 6 ; i++)
@@ -430,8 +437,8 @@ void bilgigonder()
     //delay(3000);
     //kullanicibakiye=bakiyeyukle(yirmibesK,elliK,birTL); // Kullanici Bakiyesi
 
-    //
-    urunsec();
+    
+    //urunsec();
 
     kasayigoster();
 
@@ -452,21 +459,21 @@ void siparisYukle(){
    tempCikolata = 0;
    tempBiskuvi = 0;
    
-   float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
-   konsoldaSiparisler();
+  // float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
+  // konsoldaSiparisler();
    
-   int temp;
-   temp = paraSikismasi();
-  if(temp == 2){
-    delay(500); 
-    digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(4000);               // wait for a second
-    digitalWrite(ledPin, LOW);
-    Serial.print("\nPara sıkıştı.");
+ //  int temp;
+ //  temp = paraSikismasi();
+ // if(temp == 2){
+ //   delay(500); 
+ //   digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
+  //  delay(4000);               // wait for a second
+   // digitalWrite(ledPin, LOW);
+    //Serial.print("\nPara sıkıştı.");
     
-  } else{
-   bilgigonder(); 
-  }
+ // } else{
+  // bilgigonder(); 
+ // }
 }
 
 int paraSikismasi(){
