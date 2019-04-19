@@ -1,13 +1,11 @@
-    
 #include <LiquidCrystal.h>
 
 // initialize the library with The numbers of the interface pins
 LiquidCrystal lcd(PE_4, PE_5, PD_0, PD_1, PD_2, PD_3);
 
 //LED değişkenleri
-//const int ledPin =  GREEN_LED; 
 const int ledPin = RED_LED;
-const int ledPin3 = BLUE_LED;
+
 
 float guncelbakiye = 0;
 
@@ -134,11 +132,10 @@ void bakiyeYukle()
     toplam+=elliK*0.50;
     toplam+=birTL*1.0;
     
-    //banka.para[0]+=yirmibesK;
-    //banka.para[1]+=elliK;
-    //banka.para[2]+=birTL;
+    banka.para[0]+=yirmibesK;
+    banka.para[1]+=elliK;
+    banka.para[2]+=birTL;
     
-    //printf("\nKullanicinin Yukledigi Para Miktari: %0.2f TL\n",toplam);
     kullanicibakiye = toplam;
   
     Serial.print("0.25TL:");
@@ -159,46 +156,47 @@ void bakiyeYukle()
     lcd.clear();
     lcd.print(toplam);
     lcd.print("TL attiniz.");
+    delay(3000);
     tempYirmibes = 0;
     tempElli = 0;
     tempBir = 0;
-    bilgigonder();
-    //return toplam;
+    kasayigoster();
+
 }
 
-void bakiye(){
-  //Butonlarla alınan kullanıcı bakiyesini gerekli değişkenlere atama
-  //yirmibesK = tempYirmibes;
-  //elliK = tempElli;
-  //birTL = tempBir;
-  //tempYirmibes = 0;
-  //tempElli = 0;
-  //tempBir = 0;
-  //float toplam = (yirmibesK*0.25) + (elliK*0.5) + (birTL*1);
-  //kullanicibakiye = toplam;
-  //lcd.clear();
-  //lcd.print(toplam);
-  //lcd.print("TL attiniz.");
-  //Serial.print("0.25TL:");
-  //Serial.print(yirmibesK);
-  //Serial.print("tane\n");
-  //Serial.print("0.50TL:");
-  //Serial.print(elliK);
-  //Serial.print("tane\n");
-  //Serial.print("1TL:");
-  //Serial.print(birTL);
-  //Serial.print("tane\n");
-  //Serial.print("\n");
-  //Sprintf("0.25TL: " +yirmibesK + "0.50TL: ", +elliK + "1TL: ", + birTL);
-  //Serial.print("Kullanıcı Bakiyesi:");
-  //Serial.print(toplam,2);
-  //Serial.print("\n");
-  //Serial.println(a,2);
-  //sprintf(deneme,"%d kere geldim %d kere gittim",4,5);
-  //Serial.println(deneme);
-  //delay(600);
-  
+void siparisYukle(){
+   //Butonlarla alınan kullanıcı siparişlerini gerekli değişkenlere atama
+   ssu = tempSu;
+   scay = tempCay;
+   skahve = tempKahve;
+   scikolata = tempCikolata;
+   sbiskuvi = tempBiskuvi;
+   tempSu = 0;
+   tempCay = 0;
+   tempKahve = 0;
+   tempCikolata = 0;
+   tempBiskuvi = 0;
+   
+   float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
+   konsoldaSiparisler();
+   
+   int temp;
+   temp = paraSikismasi();
+   if(temp == 2){
+     delay(500); 
+     digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
+     delay(4000);               // wait for a second
+     digitalWrite(ledPin, LOW);
+     Serial.print("\nPara sıkıştı.");
+     sifirla();
+    } 
+    else {
+    bilgigonder(); 
+    }
+
 }
+
+
 
 
 void kasayigoster(){
@@ -216,13 +214,12 @@ void kasayigoster(){
     Serial.print(" tane\n");
     Serial.print("Kasa: ");
     Serial.print(toplam);
-    Serial.print(" TL");
+    Serial.print(" TL\n");
     
     lcd.clear();
     lcd.print("Kasa: ");
     lcd.print(toplam);
-    lcd.print("TL\n");
-    Serial.print("\n");
+    lcd.print("TL");
 }
 
 void konsoldaSiparisler(){
@@ -249,68 +246,24 @@ void konsoldaSiparisler(){
    
 }
 
+void stokGoster(){
+ 
+    Serial.print("\nUrun Stogu\n");
+    for (int i = 0; i < 5; i++)
+    {
+        Serial.print(urunler[i].urunAd);
+        Serial.print(": ");
+        Serial.print(urunler[i].urunStok);
+        Serial.print(" tane\n");
+    }
 
+}
 
-//a,b,c,d,f, kullanicibakiye zaten global o yüzden göndermeye gerek yok. guncelbakiye global yapılmalı
-//int a, int b,int c,int d,int f,float kullanicibakiye,float guncelbakiye
 void urunsec(){
     float harcamatutari=0;
     float paraustu=0;
     int ust=0, urunkontrol=0;
-// Stok Kontrolu Islemi
-    for(int i; i<5; i++)
-    {   if(i==0) {
-            if(ssu>urunler[i].urunStok){
-                Serial.print("\nSectiginiz ");
-                Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
-                ssu=0;
-            }
-            else(ssu<=urunler[i].urunStok)
-            urunler[i].urunStok-=ssu;
-        }
-        if(i==1) {
-            if(scay>urunler[i].urunStok){
-                 Serial.print("\nSectiginiz ");
-                Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
-                scay=0;
-            }
-            else(scay<=urunler[i].urunStok)
-            urunler[i].urunStok-=scay;
-        }
-        if(i==2) {
-            if(skahve>urunler[i].urunStok){
-                Serial.print("\nSectiginiz ");
-                Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
-                skahve=0;
-            }
-            else(skahve<=urunler[i].urunStok)
-            urunler[i].urunStok-=skahve;
-        }
-        if(i==3) {
-            if(scikolata>urunler[i].urunStok){
-                Serial.print("\nSectiginiz ");
-                Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
-                scikolata=0;
-            }
-            else(scikolata<=urunler[i].urunStok)
-            urunler[i].urunStok-=scikolata;
-        }
-        if(i==4) {
-            if(sbiskuvi>urunler[i].urunStok){
-                Serial.print("\nSectiginiz ");
-                Serial.print(urunler[i].urunAd);
-                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
-                sbiskuvi=0;
-            }
-            else(sbiskuvi<=urunler[i].urunStok)
-            urunler[i].urunStok-=sbiskuvi;
-        }
 
-    }
     for (int i = 0; i <5 ; ++i) {
         if(i==0)
             harcamatutari+=ssu*urunler[i].urunFiyat;
@@ -323,22 +276,84 @@ void urunsec(){
         if(i==4)
             harcamatutari+=sbiskuvi*urunler[i].urunFiyat;
     }
-
-    //printf("\nSecilen Urunler icin Harcanacak Tutar: %0.2f\n",harcamatutari);
-    lcd.clear();
-    lcd.print("Siparis:");
-    lcd.print(harcamatutari);
-    lcd.print("TL");
-    delay(4000);
     
-    if(harcamatutari>kullanicibakiye){
+    if(kullanicibakiye<harcamatutari){
         Serial.print("\nAlisveris icin Bakiyeniz Yetersiz. ");
         lcd.clear();
         lcd.print("Bakiye yetersiz.");
         delay(4000);
-    }// Kullanıcının Parasının Yetmemesi Durumu
-        
-    else if (harcamatutari==kullanicibakiye){
+    }else{
+    // Stok Kontrolu Islemi
+    for(int i=0; i<5; i++)
+    {   
+        if(i==0) {
+            if(ssu>urunler[i].urunStok){
+                Serial.print("\nSectiginiz ");
+                Serial.print(urunler[i].urunAd);
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                ssu=0;
+            }
+            if(ssu<=urunler[i].urunStok){
+              urunler[i].urunStok-=ssu;
+              Serial.print("\nYeterli su var");
+            }
+            
+        }
+        if(i==1) {
+            if(scay>urunler[i].urunStok){
+                 Serial.print("\nSectiginiz ");
+                Serial.print(urunler[i].urunAd);
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                scay=0;
+            }
+            if(scay<=urunler[i].urunStok){
+              urunler[i].urunStok-=scay;
+              Serial.print("\nYeterli çay var");
+            }
+            
+        }
+        if(i==2) {
+            if(skahve>urunler[i].urunStok){
+                Serial.print("\nSectiginiz ");
+                Serial.print(urunler[i].urunAd);
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                skahve=0;
+            }
+            if(skahve<=urunler[i].urunStok){
+               urunler[i].urunStok-=skahve;
+               Serial.print("\nYeterli kahve var");
+            }
+           
+        }
+        if(i==3) {
+            if(scikolata>urunler[i].urunStok){
+                Serial.print("\nSectiginiz ");
+                Serial.print(urunler[i].urunAd);
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                scikolata=0;
+            }
+            if(scikolata<=urunler[i].urunStok){
+              urunler[i].urunStok-=scikolata;  
+              Serial.print("\nYeterli cikolata var");
+            }
+            
+        }
+        if(i==4) {
+            if(sbiskuvi>urunler[i].urunStok){
+                Serial.print("\nSectiginiz ");
+                Serial.print(urunler[i].urunAd);
+                Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
+                sbiskuvi=0;
+            }
+            if(sbiskuvi<=urunler[i].urunStok){
+              urunler[i].urunStok-=sbiskuvi;  
+              Serial.print("\nYeterli biskuvi var\n");
+            }
+            
+        }
+
+    }
+    if (harcamatutari==kullanicibakiye){
         Serial.print("\nAlisveris Gerceklesir... Para ustu yok.\n");
         lcd.clear();
         lcd.print("Para ustu yok.");
@@ -357,7 +372,6 @@ void urunsec(){
         Serial.print(paraustu);
         Serial.print("\nPara Ustu Hesaplaniyor...\n");
 
-        //sleep(2);
         while(paraustu!=0.0)
         {
             paraustu-=0.25;
@@ -377,57 +391,46 @@ void urunsec(){
         if(ust>banka.para[0]){
             Serial.print("\nPara ustu verilemiyor, bozuk 25 Kurus yetersiz");
         }
-        //printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
+        
         //1 TL Miktarı
         Serial.print(birtl);
         Serial.print(" tane 1TL");
         Serial.print("\n");
-        //lcd.clear();
-        //lcd.print(birtl);
-        //lcd.print("tane 1TL");
-        //delay(4000);
         
         //0.50 TL Miktarı
         Serial.print(ellikurus);
         Serial.print(" tane 0.50TL");
         Serial.print("\n");
-        //lcd.clear();
-        //lcd.print(ellikurus);
-        //lcd.print("tane 0.5TL");
-        //delay(4000);
         
         //0.25 TL Miktarı
         Serial.print(ust);
         Serial.print(" tane 0.25TL");
         Serial.print("\n");
-        //lcd.clear();
-        //lcd.print(ust);
-        //lcd.print("tane 0.25TL");
-        //delay(4000);
+        
         
         banka.para[0]-=ust;
         banka.para[1]-=ellikurus;
         banka.para[2]-=birtl;
-        //sleep(2);
-    }
+       
+        stokGoster();
+        kullanicibakiye = 0;
+    }   
+  
+ }
+
+    
+    /*
+    if(harcamatutari>kullanicibakiye){
+       
+    }// Kullanıcının Parasının Yetmemesi Durumu*/
+        
+     
 }
 
-
-
-
-void bilgigonder()
-{
-    //Bu kod yorum satırına alınacak
-    //int yirmibeskurus=5,ellikurus=10,birtl=15; //Kullanıcı Girdisi
-    //int a=2,b=2,c=2,d=2,f=2; // Alınacak Ürünler
-    
+void oku(){
     char temp[30];
     strcpy(temp,input[0]);//20 20 10 -> temp
-    kasabilgilerinial(temp);
-    kasayigoster();
-    banka.para[0]+=yirmibesK;
-    banka.para[1]+=elliK;
-    banka.para[2]+=birTL;
+    kasabilgilerinial(temp);       
     int i ;
     int sayi = 0  ;
     for(int i = 1 ; i < 6 ; i++)
@@ -436,54 +439,15 @@ void bilgigonder()
         urunbilgilerinial(temp,sayi);
         sayi++ ;
     }
-
-    //kasayigoster();
-    //urunlerigoster();
-    guncelbakiye=(banka.para[0]*0.25)+(banka.para[1]*0.5)+(banka.para[2]*1); //Kasadaki Toplam Para
-    
-    
-    //yirmibeskurus, ellikurus, birt1 değişkenlerine butonlar ile değer atayan fonksiyon burada çağıralacak
-    //lcd.print("BEFORE");
-    //delay(3000);
-    //kullanicibakiye=bakiyeyukle(yirmibesK,elliK,birTL); // Kullanici Bakiyesi
-
-    
-    //urunsec();
-
-    kasayigoster();
-
 }
 
 
-
-void siparisYukle(){
-   //Butonlarla alınan kullanıcı siparişlerini gerekli değişkenlere atama
-   ssu = tempSu;
-   scay = tempCay;
-   skahve = tempKahve;
-   scikolata = tempCikolata;
-   sbiskuvi = tempBiskuvi;
-   tempSu = 0;
-   tempCay = 0;
-   tempKahve = 0;
-   tempCikolata = 0;
-   tempBiskuvi = 0;
-   
-  // float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
-  // konsoldaSiparisler();
-   
- //  int temp;
- //  temp = paraSikismasi();
- // if(temp == 2){
- //   delay(500); 
- //   digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
-  //  delay(4000);               // wait for a second
-   // digitalWrite(ledPin, LOW);
-    //Serial.print("\nPara sıkıştı.");
-    
- // } else{
-  // bilgigonder(); 
- // }
+void bilgigonder()
+{  
+    stokGoster();
+    guncelbakiye=(banka.para[0]*0.25)+(banka.para[1]*0.5)+(banka.para[2]*1); //Kasadaki Toplam Para               
+    urunsec();
+    kasayigoster();
 }
 
 int paraSikismasi(){
@@ -492,7 +456,12 @@ int paraSikismasi(){
   return deger;
 }
 
+
 void sifirla(){
+   banka.para[0]-= yirmibesK;
+   banka.para[1]-= elliK;
+   banka.para[2]-= birTL;
+  
    ssu = 0;
    scay = 0;
    skahve = 0;
@@ -501,6 +470,9 @@ void sifirla(){
    birTL=0;
    elliK=0;
    yirmibesK=0;
+   Serial.print("\nSıfırlandıktan sonra ürün stoğu ve kasa bakiyesi\n");
+   kasayigoster();
+   stokGoster();
 }
 
 
@@ -512,7 +484,6 @@ void setup() {
   
   // Pinleri output olarak başlat:
   pinMode(ledPin, OUTPUT);      
-  pinMode(ledPin3, OUTPUT);
   
   pinMode(yirmibes, INPUT_PULLUP);     
   pinMode(elli, INPUT_PULLUP);     
@@ -525,18 +496,14 @@ void setup() {
   pinMode(biskuvi, INPUT_PULLUP);
   pinMode(siparisBitis, INPUT_PULLUP);
   pinMode(resetTusu, INPUT_PULLUP);
-  
+  oku();
 }
 
 //float a=4.512342;
 //char deneme[250];
 
 void loop(){
-  //Serial.println("kadir ");
-  //Serial.println(a,2);
-  //sprintf(deneme,"%d kere geldim %d kere gittim",4,5);
-  //Serial.println(deneme);
-  //delay(600);
+  
   yirmibesDurumu = digitalRead(yirmibes);
   elliDurumu = digitalRead(elli);
   birDurumu = digitalRead(bir);
@@ -611,25 +578,10 @@ void loop(){
   //Reset butonu
   if(resetTusuDurumu == LOW){
     delay(300);
-    //digitalWrite(ledPin3, HIGH);   // turn the LED on (HIGH is the voltage level)
-    //delay(4000);               // wait for a second
-    //digitalWrite(ledPin3, LOW);
     sifirla();
     lcd.clear();
     lcd.print("Sifirlandi");
-    Serial.print("Siparişler ve Kullanıcı bakiyesi sıfırlandı.");
+    Serial.print("Siparişler ve Kullanıcı bakiyesi sıfırlandı.\n");
     
   }
 }
-
-//LCD ekrana sığamayacağı için bu fonksiyon devredışı bırakılabilir.
-/*
-void urunlerigoster(){
-    printf("\nUrun Bilgileri \nUrun Adi\t Urun Stogu\t Urun Fiyati\n");
-    for (int i = 0; i < 5; i++)
-    {
-        printf("%s, \t\t %d, \t\t%0.2f \n",urunler[i].urunAd,urunler[i].urunStok,urunler[i].urunFiyat);
-    }
-}
-*/
-
