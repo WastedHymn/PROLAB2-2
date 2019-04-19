@@ -415,8 +415,9 @@ void siparisYukle(){
     digitalWrite(ledPin, LOW);
     Serial.print("\nPara sıkıştı.");
     
+  } else{
+   bilgigonder(); 
   }
-   bilgigonder();
 }
 
 int paraSikismasi(){
