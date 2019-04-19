@@ -432,10 +432,6 @@ void urunsec(){
  }
 
     
-    /*
-    if(harcamatutari>kullanicibakiye){
-       
-    }// Kullanıcının Parasının Yetmemesi Durumu*/
         
      
 }
