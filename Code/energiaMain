@@ -266,6 +266,8 @@ void urunsec(){
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
                 ssu=0;
             }
+            else(ssu<=urunler[i].urunStok)
+            urunler[i].urunStok-=ssu;
         }
         if(i==1) {
             if(scay>urunler[i].urunStok){
@@ -274,6 +276,8 @@ void urunsec(){
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
                 scay=0;
             }
+            else(scay<=urunler[i].urunStok)
+            urunler[i].urunStok-=scay;
         }
         if(i==2) {
             if(skahve>urunler[i].urunStok){
@@ -282,6 +286,8 @@ void urunsec(){
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
                 skahve=0;
             }
+            else(skahve<=urunler[i].urunStok)
+            urunler[i].urunStok-=skahve;
         }
         if(i==3) {
             if(scikolata>urunler[i].urunStok){
@@ -290,6 +296,8 @@ void urunsec(){
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
                 scikolata=0;
             }
+            else(scikolata<=urunler[i].urunStok)
+            urunler[i].urunStok-=scikolata;
         }
         if(i==4) {
             if(sbiskuvi>urunler[i].urunStok){
@@ -298,6 +306,8 @@ void urunsec(){
                 Serial.print(" urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.");
                 sbiskuvi=0;
             }
+            else(sbiskuvi<=urunler[i].urunStok)
+            urunler[i].urunStok-=sbiskuvi;
         }
 
     }
