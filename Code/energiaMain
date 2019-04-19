@@ -169,7 +169,41 @@ void urunlerigoster(){
 void urunsec(int a, int b,int c,int d,int f,float kullanicibakiye,float guncelbakiye){
     float harcamatutari=0;
     float paraustu=0;
-    int ust=0;
+    int ust=0, urunkontrol=0;
+// Stok Kontrolu Islemi
+    for(int i; i<5; i++)
+    {   if(i==0) {
+            if(a>urunler[i].urunStok){
+                printf("Sectiginiz %s urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.",urunler[i].urunAd);
+                a=0;
+            }
+        }
+        if(i==1) {
+            if(b>urunler[i].urunStok){
+                printf("Sectiginiz %s urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.",urunler[i].urunAd);
+                b=0;
+            }
+        }
+        if(i==2) {
+            if(c>urunler[i].urunStok){
+                printf("Sectiginiz %s urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.",urunler[i].urunAd);
+                c=0;
+            }
+        }
+        if(i==3) {
+            if(d>urunler[i].urunStok){
+                printf("Sectiginiz %s urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.",urunler[i].urunAd);
+                d=0;
+            }
+        }
+        if(i==4) {
+            if(f>urunler[i].urunStok){
+                printf("Sectiginiz %s urunu elimizde yeteri kadar bulunmadigi icin tahsil edilememektedir.",urunler[i].urunAd);
+                f=0;
+            }
+        }
+
+    }
     for (int i = 0; i <5 ; ++i) {
         if(i==0)
             harcamatutari+=a*urunler[i].urunFiyat;
@@ -220,7 +254,16 @@ void urunsec(int a, int b,int c,int d,int f,float kullanicibakiye,float guncelba
         ust%=4;
         int ellikurus=ust/2;
         ust%=2;
-
+        // 1TL 50Krs ve 25Krslarin sayisinin kontrolu
+        if(birtl>banka.para[2]){
+            printf("Para ustu verilemiyor, bozuk 1 TL yetersiz");
+        }
+        if(ellikurus>banka.para[1]){
+            printf("Para ustu verilemiyor, bozuk 50 Kurus yetersiz");
+        }
+        if(ust>banka.para[0]){
+            printf("Para ustu verilemiyor, bozuk 25 Kurus yetersiz");
+        }
         //printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
         //1 TL Miktarı
         lcd.clear();
