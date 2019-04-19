@@ -4,15 +4,15 @@
 LiquidCrystal lcd(PE_4, PE_5, PD_0, PD_1, PD_2, PD_3);
 
 //LED değişkenleri
-const int ledPin =  GREEN_LED; 
-const int ledPin2 = RED_LED;
+//const int ledPin =  GREEN_LED; 
+const int ledPin = RED_LED;
 const int ledPin3 = BLUE_LED;
 
 //Butonların pin numarası
 const int yirmibes = 28;    
 const int elli = 19;
 const int bir = 38;
-const int paraBitis = 37;
+const int paraBitis = 29;
 const int su = 36;
 const int cay = 35;
 const int kahve  = 34;
@@ -29,6 +29,7 @@ int tempYirmibes = 0;
 int tempElli = 0;
 int tempBir = 0;
 float kullanicibakiye;
+
 //Sipariş Değişkenleri
 int ssu = 0;
 int scay = 0;
@@ -125,18 +126,29 @@ float bakiyeyukle(int yirmibes, int ellikurus, int birtl)
     banka.para[0]+=yirmibes;
     banka.para[1]+=ellikurus;
     banka.para[2]+=birtl;
+    //printf("\nKullanicinin Yukledigi Para Miktari: %0.2f TL\n",toplam);
 
-    printf("\nKullanicinin Yukledigi Para Miktari: %0.2f TL\n",toplam);
-    
-    
     return toplam;
-
 }
 
 void kasayigoster(){
-    printf("\nKasadaki Guncel Bakiye Degerleri:\n");
-    printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d\n",banka.para[0],banka.para[1],banka.para[2]);
+   // printf("\nKasadaki Guncel Bakiye Degerleri:\n");
+  //  printf("25 Kurus Sayisi: %d \n50 Kurus Sayisi: %d \n1 TL Sayisi: %d\n",banka.para[0],banka.para[1],banka.para[2]);
     float toplam = (banka.para[0]*0.25)+(banka.para[1]*0.5)+(banka.para[2]*1);
+    Serial.print("\nKasadaki Para Miktarı\n");
+    Serial.print("0.25TL: ");
+    Serial.print(banka.para[0]);
+    Serial.print(" tane\n");
+    Serial.print("0.50TL: ");
+    Serial.print(banka.para[1]);
+    Serial.print(" tane\n");
+    Serial.print("1TL: ");
+    Serial.print(banka.para[2]);
+    Serial.print(" tane\n");
+    Serial.print("Kasa: ");
+    Serial.print(toplam);
+    Serial.print(" TL");
+    
     lcd.clear();
     lcd.print("Kasa: ");
     lcd.print(toplam);
@@ -182,15 +194,21 @@ void urunsec(int a, int b,int c,int d,int f,float kullanicibakiye,float guncelba
       //printf("\nAlisveris icin Bakiyeniz Yetersiz. ");
         lcd.clear();
         lcd.print("Bakiye yetersiz.");
+        delay(4000);
     }// Kullanıcının Parasının Yetmemesi Durumu
         
-    else if (harcamatutari==kullanicibakiye) // Paranın Tam Yetmesi Durumu
-       printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
+    else if (harcamatutari==kullanicibakiye){
+      //printf("\nAlisveris Gerceklesir... Para ustu yok.\n");
+        lcd.clear();
+        lcd.print("Para ustu yok.");
+        delay(4000);
+    }// Paranın Tam Yetmesi Durumu
+       
     else if(harcamatutari<kullanicibakiye)//Verilen Paranın Harcamadan Fazla Olması Paraustu Verilecek
     {
-        printf("\nKullanici bakiyesi: %0.2f, Harcama Tutari: %0.2f",kullanicibakiye,harcamatutari);
+        //printf("\nKullanici bakiyesi: %0.2f, Harcama Tutari: %0.2f",kullanicibakiye,harcamatutari);
         paraustu=kullanicibakiye-harcamatutari;
-        printf("\nVerilecek Para Ustumuz: %0.2f \nPara Ustu Hesaplaniyor...\n",paraustu);
+        //printf("\nVerilecek Para Ustumuz: %0.2f \nPara Ustu Hesaplaniyor...\n",paraustu);
 
         //sleep(2);
         while(paraustu!=0.0)
@@ -203,12 +221,35 @@ void urunsec(int a, int b,int c,int d,int f,float kullanicibakiye,float guncelba
         int ellikurus=ust/2;
         ust%=2;
 
-        printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
+        //printf("\nVerilecekler Bozuk Paralar \n 1 TL Sayisi: %d, 50 Kurus Sayisi: %d, 25 Kurus Sayisi: %d\n",birtl,ellikurus,ust);
+        //1 TL Miktarı
+        lcd.clear();
+        lcd.print(birtl);
+        lcd.print("tane 1TL");
+        delay(4000);
+        //0.50 TL Miktarı
+        lcd.clear();
+        lcd.print(ellikurus);
+        lcd.print("tane 0.5TL");
+        delay(4000);
+        //0.25 TL Miktarı
+        lcd.clear();
+        lcd.print(ust);
+        lcd.print("tane 0.25TL");
+        delay(4000);
         banka.para[0]-=ust;
         banka.para[1]-=ellikurus;
         banka.para[2]-=birtl;
         //sleep(2);
     }
+}
+
+void konsoldaKasa(){
+  
+}
+
+void konsoldaSiparisler(){
+  
 }
 
 void bilgigonder()
@@ -257,14 +298,33 @@ void bakiye(){
   kullanicibakiye = toplam;
   lcd.clear();
   lcd.print(toplam);
-  lcd.print(" TL para attiniz.");
+  lcd.print("TL attiniz.");
+  Serial.print("0.25TL:");
+  Serial.print(yirmibesK);
+  Serial.print("tane\n");
+  Serial.print("0.50TL:");
+  Serial.print(elliK);
+  Serial.print("tane\n");
+  Serial.print("1TL:");
+  Serial.print(birTL);
+  Serial.print("tane\n");
+  //Sprintf("0.25TL: " +yirmibesK + "0.50TL: ", +elliK + "1TL: ", + birTL);
+  Serial.print("Kullanıcı Bakiyesi:");
+  Serial.print(toplam,2);
+  //Serial.println(a,2);
+  //sprintf(deneme,"%d kere geldim %d kere gittim",4,5);
+  //Serial.println(deneme);
+  //delay(600);
   
-  
-  /*char temp[30];
-  strcpy(temp,input[0]);//20 20 10 -> temp
-  kasabilgilerinial(temp);
-  kasayigoster();*/
-  
+  int temp;
+  temp = paraSikismasi();
+  if(temp == 2){
+    delay(500); 
+    digitalWrite(ledPin, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(1000);               // wait for a second
+    digitalWrite(ledPin, LOW);
+    Serial.print("\nPara sıkıştı.");
+  }
 }
 void siparisYukle(){
    //Butonlarla alınan kullanıcı siparişlerini gerekli değişkenlere atama
@@ -278,31 +338,39 @@ void siparisYukle(){
    tempKahve = 0;
    tempCikolata = 0;
    tempBiskuvi = 0;
-   /*
-   lcd.print(ssu);
-   lcd.print(" ");
-   lcd.print(scay);
-   lcd.print(" ");
-   lcd.print(skahve);
-   lcd.print(" ");
-   lcd.print(scikolata);
-   lcd.print(" ");
-   lcd.print(sbiskuvi);
-   */
+   
    float toplam = (ssu*0.5) + (scay*1) + (skahve*1.50) + (scikolata*1.75) + (sbiskuvi*2);
-   //lcd.clear(); 
-   //delay(4000);
+   
    bilgigonder();
 }
+
+int paraSikismasi(){
+  int deger;
+  deger = random(1,5);
+  return deger;
+}
+
+void sifirla(){
+   ssu = 0;
+   scay = 0;
+   skahve = 0;
+   scikolata = 0;
+   sbiskuvi = 0;
+   birTL=0;
+   elliK=0;
+   yirmibesK=0;
+}
+
+
 
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
-  
+  Serial.begin(9600);
   
   // initialize the LED pin as an output:
   pinMode(ledPin, OUTPUT);      
-  pinMode(ledPin2, OUTPUT);
+  pinMode(ledPin3, OUTPUT);
   
   pinMode(yirmibes, INPUT_PULLUP);     
   pinMode(elli, INPUT_PULLUP);     
@@ -318,8 +386,16 @@ void setup() {
   
 }
 
+//float a=4.512342;
+//char deneme[250];
+
 void loop(){
   // read the state of the pushbutton value:  
+  //Serial.println("kadir ");
+  //Serial.println(a,2);
+  //sprintf(deneme,"%d kere geldim %d kere gittim",4,5);
+  //Serial.println(deneme);
+  //delay(600);
   yirmibesDurumu = digitalRead(yirmibes);
   elliDurumu = digitalRead(elli);
   birDurumu = digitalRead(bir);
@@ -333,14 +409,7 @@ void loop(){
   resetTusuDurumu = digitalRead(resetTusu);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:
- /*
-   if (siparisBitisDurumu == LOW) { 
-    delay(300);
-    lcd.clear();
-     i = i+1;
-    lcd.print(i);
-  }
- */
+
  //Müşteri bakiyesi alma
   if(yirmibesDurumu == LOW){
     delay(300);
@@ -399,5 +468,13 @@ void loop(){
   if(siparisBitisDurumu == LOW){
     delay(300);
     siparisYukle();
+  }
+  if(resetTusuDurumu = LOW){
+    delay(300);
+    sifirla();
+    lcd.clear();
+    lcd.print("Sifirlandi");
+    Serial.print("Siparişler ve Kullanıcı bakiyesi sıfırlandı.");
+    
   }
 }
